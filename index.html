@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Easy Earn - Task Website</title>
+
+<style>
+:root {
+  --green: #00bd69;
+  --dark: #062b2b;
+  --bg: #f4f8fa;
+  --text: #122b37;
+  --muted: #71808b;
+  --border: #e4ecef;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+button, input, select { font: inherit; }
+button { cursor: pointer; border: 0; }
+.layout { display: grid; grid-template-columns: 225px 1fr; min-height: 100vh; }
+.sidebar {
+  background: linear-gradient(180deg,#062e2d,#041e23);
+  color: white;
+  padding: 22px 14px;
+  min-height: 100vh;
+}
+.brand { font-size: 23px; font-weight: 800; margin: 5px 8px 28px; }
+.brand span { color: #00e881; }
+.brand small { display: block; font-size: 10px; color: #a4c4bd; font-weight: 400; }
+.nav { display: grid; gap: 8px; }
+.nav button {
+  text-align: left; color: #c1d3d5; background: transparent;
+  border-radius: 9px; padding: 13px; font-size: 14px;
+}
+.nav button.active, .nav button:hover { background: #009b59; color: white; }
+.main { min-width: 0; }
+.topbar {
+  height: 65px; background: white; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 25px; position: sticky; top: 0; z-index: 3;
+}
+.user { display: flex; align-items: center; gap: 9px; font-size: 13px; }
+.avatar { background: #e5f6ed; padding: 10px; border-radius: 50%; }
+.content { padding: 25px; max-width: 1450px; margin: auto; }
+.page { display: none; }
+.page.active { display: block; }
+.hero {
+  background: linear-gradient(110deg,#062b2b,#005442);
+  color: white; border-radius: 16px; padding: 34px;
+  display: grid; grid-template-columns: 1.4fr 1fr; align-items: center; gap: 20px;
+}
+.hero h1 { font-size: clamp(28px,3vw,42px); line-height: 1.3; margin: 0 0 12px; }
+.hero h1 span { color: #00e881; }
+.hero p { color: #d4e5e0; line-height: 1.8; font-size: 14px; }
+.hero-art { text-align: center; font-size: 80px; }
+.btn { padding: 12px 17px; border-radius: 9px; background: var(--green); color: white; font-weight: bold; }
+.btn.outline { background: transparent; border: 1px solid white; margin-left: 8px; }
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 13px; margin: 20px 0; }
+.stat, .feature, .panel, .task-card {
+  background: white; border: 1px solid var(--border); border-radius: 13px;
+}
+.stat { padding: 17px; display: flex; align-items: center; gap: 11px; }
+.stat-icon { background: #e7fbf1; padding: 12px; border-radius: 12px; font-size: 19px; }
+.stat small { display: block; color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.stat strong { font-size: 20px; }
+.section-title { display: flex; justify-content: space-between; align-items: center; margin: 25px 0 13px; }
+.section-title h2 { font-size: 20px; margin: 0; }
+.section-title span { color: #07894f; cursor: pointer; font-size: 13px; }
+.features { display: grid; grid-template-columns: repeat(4,1fr); gap: 13px; }
+.feature { padding: 18px; }
+.feature .ico { font-size: 25px; margin-bottom: 12px; }
+.feature strong { font-size: 14px; }
+.feature p { color: var(--muted); font-size: 12px; line-height: 1.6; }
+.task-list { display: grid; gap: 11px; }
+.task-card { padding: 13px; display: flex; align-items: center; gap: 12px; }
+.task-logo { background: #f0f6ff; padding: 11px; border-radius: 12px; font-size: 22px; }
+.task-info { flex: 1; min-width: 0; }
+.task-info strong { font-size: 14px; }
+.task-info p { color: var(--muted); font-size: 12px; margin: 5px 0 0; }
+.reward { color: #07894f; font-weight: bold; white-space: nowrap; }
+.small-btn { background: var(--green); color: white; padding: 9px 12px; border-radius: 8px; font-size: 12px; }
+.panel { padding: 22px; }
+.notice { background: #e8fbf1; padding: 15px; border-radius: 10px; line-height: 1.7; margin-bottom: 15px; }
+.contact-box { text-align: center; padding: 25px 15px; background: #f6fffa; border: 1px dashed #b9d9cc; border-radius: 13px; }
+.contact-box .big { font-size: 45px; }
+.contact-box p { color: var(--muted); font-size: 13px; line-height: 1.7; }
+.form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; }
+.field { display: grid; gap: 7px; }
+.field label { font-size: 13px; font-weight: bold; }
+.field input, .field select { width: 100%; padding: 12px; border: 1px solid #dbe5e9; border-radius: 8px; }
+.hint { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.table-wrap { overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th,td { text-align: left; padding: 13px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { color: var(--muted); }
+.pill { background: #e6f9ee; color: #07834c; padding: 4px 8px; border-radius: 20px; font-size: 11px; }
+.mobile-nav { display: none; }
+.modal-backdrop {
+  display: none; position: fixed; inset: 0; background: #061b1bd9;
+  z-index: 10; align-items: center; justify-content: center; padding: 18px;
+}
+.modal-backdrop.show { display: flex; }
+.modal { background: white; border-radius: 15px; padding: 23px; max-width: 430px; width: 100%; }
+.modal p { color: var(--muted); line-height: 1.7; font-size: 14px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.secondary { background: #edf2f4; color: #253a43; }
+.toast {
+  display: none; position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+  background: #082f2b; color: white; padding: 13px 18px; border-radius: 10px; z-index: 20;
+}
+.toast.show { display: block; }
+
+@media(max-width:1000px) {
+  .layout { grid-template-columns: 190px 1fr; }
+  .content { padding: 17px; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .features { grid-template-columns: repeat(2,1fr); }
+}
+@media(max-width:700px) {
+  .layout { display: block; }
+  .sidebar { display: none; }
+  .topbar { height: 57px; padding: 0 13px; }
+  .content { padding: 13px 12px 90px; }
+  .hero { display: block; padding: 23px 18px; }
+  .hero h1 { font-size: 30px; }
+  .hero-art { display: none; }
+  .stats { gap: 8px; margin: 13px 0; }
+  .stat { padding: 11px; gap: 7px; }
+  .stat-icon { padding: 9px; }
+  .stat strong { font-size: 17px; }
+  .stat small { font-size: 11px; }
+  .features { gap: 8px; }
+  .feature { padding: 13px; }
+  .task-card { gap: 8px; padding: 10px; }
+  .task-logo { padding: 9px; font-size: 18px; }
+  .task-info strong { font-size: 12px; }
+  .task-info p { font-size: 11px; }
+  .reward { font-size: 12px; }
+  .small-btn { padding: 8px; font-size: 11px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .panel { padding: 15px; }
+  .mobile-nav {
+    display: grid; grid-template-columns: repeat(5,1fr); position: fixed;
+    bottom: 0; left: 0; right: 0; background: white;
+    border-top: 1px solid var(--border); padding: 8px 3px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 5;
+  }
+  .mobile-nav button { background: white; color: #65757c; font-size: 10px; display: grid; gap: 4px; justify-items: center; }
+  .mobile-nav button b { font-size: 19px; font-weight: 400; }
+  .mobile-nav button.active { color: #07894f; }
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand">💠 Easy <span>Earn</span><small>Complete Tasks • Earn Money</small></div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard">⌂ &nbsp; ড্যাশবোর্ড</button>
+    <button data-page="tasks">☑ &nbsp; টাস্ক</button>
+    <button data-page="deposit">＋ &nbsp; ডিপোজিট</button>
+    <button data-page="withdraw">⇧ &nbsp; উইথড্র</button>
+    <button data-page="history">▤ &nbsp; লেনদেনের ইতিহাস</button>
+    <button data-page="account">♙ &nbsp; অ্যাকাউন্ট</button>
+  </nav>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><b>স্বাগতম, Saikat!</b></div>
+  <div class="user"><span>🔔</span><span class="avatar">👤</span><span>Saikat<br><small>User</small></span></div>
+</header>
+
+<div class="content">
+<section class="page active" id="page-dashboard">
+  <div class="hero">
+    <div>
+      <h1>সহজ কাজ করুন<br><span>আয় করুন!</span></h1>
+      <p>Easy Earn একটি টাস্ক প্ল্যাটফর্মের ডিজাইন ডেমো। টাস্ক দেখুন, অগ্রগতি ট্র্যাক করুন এবং আপনার অ্যাকাউন্ট পরিচালনা করুন।</p>
+      <button class="btn" data-go="tasks">এখনই কাজ করুন</button>
+      <button class="btn outline" onclick="showModal('কীভাবে কাজ করে?','টাস্ক নির্বাচন করুন, নির্দেশনা পড়ুন এবং কাজ সম্পন্ন করার পর যাচাইয়ের জন্য জমা দিন। এই প্রিভিউতে প্রকৃত পেমেন্ট চালু নেই।')">কীভাবে কাজ করে?</button>
+    </div>
+    <div class="hero-art">📱💸🪙</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-icon">💳</div><div><small>মোট ব্যালেন্স</small><strong>৳ <span id="balance">245.00</span></strong></div></div>
+    <div class="stat"><div class="stat-icon">📋</div><div><small>সম্পন্ন টাস্ক</small><strong id="completed">12</strong></div></div>
+    <div class="stat"><div class="stat-icon">💰</div><div><small>মোট আয়</small><strong>৳ 310.00</strong></div></div>
+    <div class="stat"><div class="stat-icon">🎧</div><div><small>সাপোর্ট</small><strong style="font-size:17px">24/7</strong></div></div>
+  </div>
+
+  <div class="section-title"><h2>আমাদের সুবিধা</h2></div>
+  <div class="features">
+    <div class="feature"><div class="ico">🛡️</div><strong>নিরাপদ ও বিশ্বাসযোগ্য</strong><p>অ্যাকাউন্ট ও কাজের তথ্য এক জায়গায়।</p></div>
+    <div class="feature"><div class="ico">🧩</div><strong>সহজ টাস্ক</strong><p>সহজে টাস্ক খুঁজে নিন ও নির্দেশনা দেখুন।</p></div>
+    <div class="feature"><div class="ico">💵</div><strong>পেমেন্ট রিকোয়েস্ট</strong><p>উইথড্র রিকোয়েস্টের ডেমো ফর্ম।</p></div>
+    <div class="feature"><div class="ico">🎧</div><strong>সাপোর্ট টিম</strong><p>ডিপোজিটের জন্য কাস্টমার সার্ভিসে যোগাযোগ করুন।</p></div>
+  </div>
+  <div class="section-title"><h2>সাম্প্রতিক টাস্ক</h2><span data-go="tasks">সব দেখুন →</span></div>
+  <div class="task-list" id="recentTasks"></div>
+</section>
+
+<section class="page" id="page-tasks">
+  <div class="section-title"><h2>টাস্ক তালিকা</h2><span>ডেমো টাস্ক</span></div>
+  <div class="notice">টাস্কের নির্দেশনা পড়ে তারপর শুরু করুন। এই নমুনায় টাস্কের বোতামগুলো ডেমো হিসেবে কাজ করে।</div>
+  <div class="task-list" id="allTasks"></div>
+</section>
+
+<section class="page" id="page-deposit">
+  <div class="section-title"><h2>ডিপোজিট</h2></div>
+  <div class="panel">
+    <div class="contact-box">
+      <div class="big">🎧</div>
+      <h3>ডিপোজিট করতে কাস্টমার সার্ভিসে যোগাযোগ করুন</h3>
+      <p>ডিপোজিটের পরিমাণ ও পেমেন্ট পদ্ধতি সম্পর্কে জানতে আমাদের কাস্টমার সার্ভিসের সঙ্গে যোগাযোগ করুন। পেমেন্ট করার আগে অফিসিয়াল তথ্য যাচাই করুন।</p>
+      <button class="btn" onclick="contactSupport()">কাস্টমার সার্ভিসে যোগাযোগ করুন</button>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-withdraw">
+  <div class="section-title"><h2>উইথড্র</h2></div>
+  <div class="panel">
+    <div class="notice">উইথড্র রিকোয়েস্ট পাঠানোর আগে আপনার তথ্য সঠিক আছে কি না নিশ্চিত করুন। এটি একটি ফ্রন্টএন্ড ডেমো; এখানে আসল টাকা পাঠানো হয় না।</div>
+    <form id="withdrawForm">
+      <div class="form-grid">
+        <div class="field"><label>পেমেন্ট পদ্ধতি</label><select id="method" required><option value="">নির্বাচন করুন</option><option>bKash</option><option>Nagad</option><option>Rocket</option></select></div>
+        <div class="field"><label>উইথড্র পরিমাণ (৳)</label><input id="amount" type="number" min="50" placeholder="সর্বনিম্ন ৫০ টাকা" required></div>
+        <div class="field" style="grid-column:1/-1"><label>আপনার পেমেন্ট নম্বর</label><input id="payNumber" type="tel" placeholder="01XXXXXXXXX" required pattern="01[0-9]{9}"></div>
+      </div>
+      <p class="hint">ডেমো ব্যালেন্স: ৳ <span id="withdrawBalance">245.00</span> · সর্বনিম্ন উইথড্র: ৳৫০</p>
+      <button class="btn" type="submit">উইথড্র রিকোয়েস্ট পাঠান</button>
+    </form>
+  </div>
+</section>
+
+<section class="page" id="page-history">
+  <div class="section-title"><h2>লেনদেনের ইতিহাস</h2></div>
+  <div class="panel table-wrap">
+    <table><thead><tr><th>তারিখ</th><th>বিবরণ</th><th>পরিমাণ</th><th>স্ট্যাটাস</th></tr></thead>
+    <tbody id="historyRows"><tr><td>2026-10-28</td><td>টাস্ক রিওয়ার্ড (ডেমো)</td><td>+৳ 5.00</td><td><span class="pill">Completed</span></td></tr></tbody></table>
+  </div>
+</section>
+
+<section class="page" id="page-account">
+  <div class="section-title"><h2>অ্যাকাউন্ট</h2></div>
+  <div class="panel">
+    <div class="stat" style="border:0;padding:0 0 18px"><div class="avatar">👤</div><div><strong>Saikat</strong><small>সাধারণ ইউজার · Demo Profile</small></div></div>
+    <div class="form-grid">
+      <div class="field"><label>নাম</label><input value="Saikat" id="profileName"></div>
+      <div class="field"><label>ইমেইল</label><input type="email" placeholder="আপনার ইমেইল"></div>
+    </div>
+    <p class="hint">এটি প্রিভিউ অ্যাকাউন্ট। স্থায়ী লগইন ও ডেটাবেসের জন্য Firebase সেটআপ করতে হবে।</p>
+    <button class="btn" onclick="toast('প্রিভিউ: প্রোফাইল সেটিংস সংরক্ষিত নয়।')">পরিবর্তন সংরক্ষণ করুন</button>
+  </div>
+</section>
+</div>
+
+<nav class="mobile-nav">
+  <button class="active" data-page="dashboard"><b>⌂</b>হোম</button>
+  <button data-page="tasks"><b>☑</b>টাস্ক</button>
+  <button data-page="deposit"><b>＋</b>ডিপোজিট</button>
+  <button data-page="withdraw"><b>⇧</b>উইথড্র</button>
+  <button data-page="account"><b>♙</b>অ্যাকাউন্ট</button>
+</nav>
+</main>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h2 id="modalTitle">বার্তা</h2><p id="modalText"></p>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeModal()">বন্ধ করুন</button>
+      <button class="btn" id="modalConfirm" onclick="closeModal()">ঠিক আছে</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// আপনার কাস্টমার সার্ভিসের WhatsApp লিংক এখানে বসান।
+const SUPPORT_URL = "";
+
+const tasks = [
+ {icon:"▶️",name:"YouTube সাবস্ক্রাইব",desc:"নির্দেশনা দেখে ডেমো টাস্ক শুরু করুন",reward:5},
+ {icon:"📘",name:"Facebook পেজ লাইক",desc:"পেজের নির্দেশনা অনুসরণ করুন",reward:3},
+ {icon:"🛒",name:"প্রোডাক্ট অর্ডার",desc:"প্রোডাক্টের তথ্য ও নিয়ম পড়ুন",reward:50},
+ {icon:"🌐",name:"Website ভিজিট",desc:"ওয়েবসাইট টাস্কের নির্দেশনা দেখুন",reward:2},
+ {icon:"📸",name:"Instagram ফলো",desc:"ডেমো সোশ্যাল টাস্ক",reward:3},
+ {icon:"✈️",name:"Telegram জয়েন",desc:"ডেমো কমিউনিটি টাস্ক",reward:4}
+];
+
+function taskHTML(t,i) {
+ return `<div class="task-card">
+ <div class="task-logo">${t.icon}</div>
+ <div class="task-info"><strong>${t.name}</strong><p>${t.desc}</p></div>
+ <div class="reward">৳ ${t.reward}</div>
+ <button class="small-btn" onclick="startTask(${i})">কাজ করুন</button>
+ </div>`;
+}
+document.getElementById("recentTasks").innerHTML=tasks.slice(0,4).map(taskHTML).join("");
+document.getElementById("allTasks").innerHTML=tasks.map(taskHTML).join("");
+
+function startTask(i) {
+ showModal(tasks[i].name,"এটি একটি নমুনা টাস্ক। আসল টাস্ক লিংক, যাচাই এবং রিওয়ার্ড সিস্টেম পরে ব্যাকএন্ডের সঙ্গে যুক্ত করতে হবে।");
+}
+function go(page) {
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById("page-"+page).classList.add("active");
+ document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+function showModal(title,text) {
+ document.getElementById("modalTitle").textContent=title;
+ document.getElementById("modalText").textContent=text;
+ document.getElementById("modalBackdrop").classList.add("show");
+}
+function closeModal() { document.getElementById("modalBackdrop").classList.remove("show"); }
+
+function contactSupport() {
+ if(SUPPORT_URL) {
+   window.open(SUPPORT_URL,"_blank","noopener,noreferrer");
+ } else {
+   showModal("কাস্টমার সার্ভিস","কাস্টমার সার্ভিসের WhatsApp লিংক এখনো সেট করা হয়নি। কোডের শুরুতে SUPPORT_URL-এ আপনার অফিসিয়াল লিংক বসান।");
+ }
+}
+function toast(msg) {
+ const el=document.getElementById("toast");
+ el.textContent=msg; el.classList.add("show");
+ setTimeout(()=>el.classList.remove("show"),2600);
+}
+
+document.getElementById("withdrawForm").addEventListener("submit",function(e) {
+ e.preventDefault();
+ const amount=Number(document.getElementById("amount").value);
+ const method=document.getElementById("method").value;
+ const number=document.getElementById("payNumber").value;
+ if(amount<50) { toast("সর্বনিম্ন উইথড্র ৫০ টাকা।"); return; }
+ showModal("উইথড্র রিকোয়েস্ট","আপনার "+method+" নম্বর "+number+"-এ ৳"+amount+" উইথড্র রিকোয়েস্ট ডেমো হিসেবে তৈরি হয়েছে। আসল রিকোয়েস্ট সংরক্ষণ করতে নিরাপদ ব্যাকএন্ড দরকার।");
+ const row=document.createElement("tr");
+ row.innerHTML=`<td>2026-10-28</td><td>উইথড্র রিকোয়েস্ট (${method})</td><td>−৳ ${amount.toFixed(2)}</td><td><span class="pill">Demo Pending</span></td>`;
+ document.getElementById("historyRows").prepend(row);
+ this.reset();
+});
+</script>
+</body>
+</html>
